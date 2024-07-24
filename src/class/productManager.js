@@ -83,6 +83,7 @@ class ProductManager {
     async deleteProduct(id){
         await this.getProductList()
         const index = this.productList.findIndex(product => product.id == id)
+        if (index == -1) {return false;}
         this.productList.splice(index, 1)
         await fs.promises.writeFile(this.path, JSON.stringify({ data: this.productList }));
     }

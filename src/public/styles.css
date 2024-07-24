@@ -1,0 +1,75 @@
+body{
+    background-color:lightblue;
+}
+.listContainer{
+    display: flex;
+    width: 100%;
+    padding: 0, 5%, 0, 5%;
+    margin-top: 30px;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    background-color: lightgreen;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 2px solid black;
+    margin-inline: 20px;
+}
+.innerContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    width: 100%;
+
+}
+.formsContainer{
+    display: flex;
+    justify-content: space-around;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.form{
+    width: 590px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 40px;
+    padding: 25px;
+    background-color: lemonchiffon;
+    justify-content: center;
+    border-radius: 6px;
+    margin: 20px auto 20px auto;
+}
+.form div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.form div textarea{
+    width: 171px;
+}
+.button{
+    grid-column: 1/-1;
+    justify-self: center;
+    margin-top: 10px;
+    width: 100px;
+    height: 40px;
+}
+.idContainer{
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    justify-content: center !important;
+}
+#id, #id2{
+    margin-left: 25px;
+}

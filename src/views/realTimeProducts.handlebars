@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 style="text-align: center;">Real TimeProducts</h1>
+    <div class="formsContainer">
+        <div>
+            <h2 style="text-align: center;">Añadir un producto</h2>
+            <div class="form">
+            <div>
+                <label for="title">Nombre</label>
+                <input type="text" name="title" id="title">        
+            </div>
+            <div>
+                <label for="code">Código</label>
+                <input type="text" name="code" id="code">
+            </div>
+            <div>
+                <label for="description">Descripción</label>
+                <textarea name="description" id="description"></textarea>
+            </div>
+            <div>
+                <label for="price">Precio</label>
+                <input type="number" name="price" id="price">
+            </div>
+            <div>
+                <label for="category">Categoría</label>
+                <input type="text" name="category" id="category">
+            </div>
+            <div>
+                <label for="stock">Stock</label>
+                <input type="number" name="stock" id="stock">
+            </div>
+            <button class="button addButton">Añadir</button>
+        </div>
+        </div>
+
+        <div>
+            <h2 style="text-align: center;">Modificar un producto</h2>
+            <div class="form">
+                <div class="idContainer">
+                    <label for="id">ID</label>
+                    <input type="text" name="id" id="id">        
+                </div>
+                <div>
+                    <label for="title2">Nombre</label>
+                    <input type="text" name="title2" id="title2">        
+                </div>
+                <div>
+                    <label for="code2">Código</label>
+                    <input type="text" name="code2" id="code2">
+                </div>
+                <div>
+                    <label for="description2">Descripción</label>
+                    <textarea name="description2" id="description2"></textarea>
+                </div>
+                <div>
+                    <label for="price2">Precio</label>
+                    <input type="number" name="price2" id="price2">
+                </div>
+                <div>
+                    <label for="category2">Categoría</label>
+                    <input type="text" name="category2" id="category2">
+                </div>
+                <div>
+                    <label for="stock2">Stock</label>
+                    <input type="number" name="stock2" id="stock2">
+                </div>
+                <button class="button updateButton">Actualizar</button>
+            </div>
+        </div>
+    </div>
+            <div>
+            <h2 style="text-align: center;">Eliminar un producto</h2>
+            <div class="form" style="width: 250px;">
+                <div class="idContainer">
+                    <label for="id2">ID</label>
+                    <input type="text" name="id2" id="id2">        
+                </div>
+                
+                <button class="button deleteButton">Eliminar</button>
+            </div>
+
+    <div class="listContainer"></div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="rtp.js"></script>
