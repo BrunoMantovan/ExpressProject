@@ -6,6 +6,8 @@ body{
     width: 100%;
     padding: 0, 5%, 0, 5%;
     margin-top: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 .container{
     display: flex;
@@ -16,7 +18,7 @@ body{
     padding: 10px 20px;
     border-radius: 6px;
     border: 2px solid black;
-    margin-inline: 20px;
+    margin: 20px 20px; 
 }
 .innerContainer{
     display: grid;

@@ -1,5 +1,3 @@
-
-
 socket = io()
 
 const listContainer = document.querySelector(".listContainer")
@@ -54,8 +52,20 @@ socket.on("showList", (list) => {
     console.log(list)
     changeDom(list)
 })
-socket.on("addedProduct", (list) => {
-    console.log(list)
+socket.on("addedProduct", (list, message) => {
+    Swal.fire({
+        title: "Éxito",
+        text: message,
+        icon: "success",
+    })
+    changeDom(list)
+})
+socket.on("updatedProduct", (list, message) => {
+    Swal.fire({
+        title: "Éxito",
+        text: message,
+        icon: "success",
+    })
     changeDom(list)
 })
 
@@ -76,7 +86,6 @@ function addProduct() {
         category,
         stock,
         status: true,
-        thumbnails: []
     }
     if (title === "" || code === "" || description === "" || price === 0 || category === "" || stock === 0) {
         return Swal.fire({
@@ -85,8 +94,7 @@ function addProduct() {
             allowOutsideClick: false,
         })
     }
-    console.log(product)
-    socket.emit("addProduct", product)
+    socket.emit("addProduct",product)
 }
 
 function updateProduct() {

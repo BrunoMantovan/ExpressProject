@@ -47,6 +47,9 @@ class ProductManager {
             if (typeof product[field] !== types[field]) {
                 return false;
             }
+            if (product.stock <= 0 || product.price <= 0) {
+                return false;
+            }
         }
         const result = await this.getProductList()
         const index = result.findIndex(e => product.code == e.code)
