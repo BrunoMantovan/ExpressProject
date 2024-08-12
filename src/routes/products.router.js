@@ -9,30 +9,51 @@ const router = Router();
 const productManagerDB = new ProductManagerDB()
 
 router.get("/", async (req, res) => {
-    const list = await productManager.getProductList()
+    try {
+        const { page=1, limit=10, sort='' } = req.query;        
+        const products = await productManagerDB.getProducts(page, limit, sort);
+        const result = products.docs     
+        res.status(200).json({
+            status: "Success",
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? `/api/products?page=${products.prevPage}&limit=${limit}&sort=${sort}` : null,
+            nextLink: products.hasNextPage ? `/api/products?page=${products.nextPage}&limit=${limit}&sort=${sort}` : null,
+        })
+      } catch(e){
+        return res.status(500).json({
+            mensaje: "Error cargando productos",
+            error: e
+        })
+    }
 })
+router.get("/search/:category", async (req, res) => {
+    const category = req.params.category;
+    let products = await manager.getProductsByQueryCategory(
+      category.toLowerCase()
+    );
+    res.status(200).json(products);
+});
+
+router.get("/price", async (req, res) => {
+  let products = await manager.ordenPrice(1);
+  res.status(200).json(products);
+});
 
 router.post("/", async (req, res) => {
     const product = req.body
-    console.log(product)
-    
-    /* const result = await productManager.addProduct(product);
-    if (result === false) {
-        return res.status(400).json({
-            mensaje: "Faltan campos o tienen valores incorrectos"
+    try{
+        const result = await ProductModel.create(product)
+        return res.status(201).json({
+        mensaje: "producto añadido",
+        payload: result
         });
-    }else if(result == true){
-        res.status(201).json({
-            mensaje: "producto añadido"
-        })
-    } */
-   try{
-    const result = await ProductModel.create(product)
-    return res.status(201).json({
-       mensaje: "producto añadido",
-       payload: result
-    });
-   }catch(e){
+    }catch(e){
        return res.status(500).json({
            mensaje: "Error creando producto",
            error: e

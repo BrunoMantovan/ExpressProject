@@ -13,11 +13,17 @@ import ProductManagerDB from "./dao/managers/products.dao.managers.js";
 const app = express();
 const productManager = new ProductManager(__dirname + "/data/products.json")
 const productManagerDB = new ProductManagerDB();
+const hbs = handlebars.create({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+});
 //middleware
 app.use(express.json()) //parsea el body
 app.use(express.urlencoded({extended: true})) //permite recibir formularios de las urls
 app.use(express.static(__dirname + "/public")); //permite servir archivos estáticos
-app.engine("handlebars", handlebars.engine());
+app.engine('handlebars', hbs.engine);
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars")
 app.use("/api/products", productRoute)
@@ -38,8 +44,6 @@ mongoose.connect("mongodb+srv://ploktor:Sabaton.2001@cluster0.sknub.mongodb.net/
 export const io = new Server(httpServer);
 
 io.on("connection", async (socket) => {
-    const list = await productManagerDB.getProducts()
-    socket.emit("showList", list)
     socket.on("addProduct", async (product) => {
 
         const result = await productManagerDB.addProducts(
@@ -57,7 +61,7 @@ io.on("connection", async (socket) => {
             console.log(result);
             return socket.emit("error", "El producto ya existe")
         }else if(result){
-            return socket.emit("addedProduct", list, "El producto ha sido añadido correctamente")
+            return socket.emit("addedProduct", "El producto ha sido añadido correctamente")
         } 
     })
     socket.on("updateProduct", async (product) => {
@@ -66,7 +70,7 @@ io.on("connection", async (socket) => {
             console.log(result);
             return socket.emit("error", "El producto no existe")
         }else if(result){
-            return socket.emit("updatedProduct", list, "El producto ha sido actualizado correctamente")
+            return socket.emit("updatedProduct", "El producto ha sido actualizado correctamente")
         }
     })
     socket.on("deleteProduct", async (id) => {
@@ -75,7 +79,7 @@ io.on("connection", async (socket) => {
             console.log(result);
             return socket.emit("error", "El producto no existe")
         }
-        return socket.emit("addedProduct", list)
+        return socket.emit("addedProduct")
 
     })
 })

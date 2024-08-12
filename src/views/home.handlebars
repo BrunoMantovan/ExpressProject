@@ -8,8 +8,22 @@
 <body>
     <h1 style="text-align: center;">Home</h1>
     <h2 style="text-align: center;">Lista de productos</h2>
-    <div class="listContainer"></div>
+    <div class="listContainer">
+        {{#each result}}
+        <div class="container">
+            <div class="innerContainer">
+                <p>{{this.title}}</p>
+                <p>{{this.description}}</p>
+                <p>Precio: ${{this.price}}</p>
+                <p>Categoría: {{this.category}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>Estado: {{#if this.status}}disponible{{else}}no disponible{{/if}}</p>
+                <p>Código: {{this.code}}</p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
 </body>
 </html>
 <script src="/socket.io/socket.io.js"></script>
-<script src="home.js"></script>
+<script src="/home.js"></script>

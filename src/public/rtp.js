@@ -48,25 +48,25 @@ function changeDom(list){
 
     })
 }
-socket.on("showList", (list) => {
-    console.log(list)
-    changeDom(list)
+socket.on("showList", () => {
+
+    changeDom()
 })
-socket.on("addedProduct", (list, message) => {
+socket.on("addedProduct", (message) => {
     Swal.fire({
         title: "Éxito",
         text: message,
         icon: "success",
     })
-    changeDom(list)
+    changeDom()
 })
-socket.on("updatedProduct", (list, message) => {
+socket.on("updatedProduct", (message) => {
     Swal.fire({
         title: "Éxito",
         text: message,
         icon: "success",
     })
-    changeDom(list)
+    changeDom()
 })
 
 function addProduct() {

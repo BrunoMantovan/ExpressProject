@@ -3,7 +3,6 @@ socket = io()
 const listContainer = document.querySelector(".listContainer")
 
 socket.on("showList", (list) => {
-    console.log(list)
     listContainer.innerHTML = ""
     list.forEach(e => {
         const div = document.createElement("div")
@@ -35,6 +34,5 @@ socket.on("showList", (list) => {
         innerDiv.appendChild(code)
         div.appendChild(innerDiv)
         listContainer.appendChild(div)
-
     })
 })

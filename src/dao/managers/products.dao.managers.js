@@ -3,18 +3,21 @@ import { ProductModel } from '../model/products.model.js';
 class ProductManagerDB {
   constructor() {}
 
-  async getProducts(page = 1, limit = 10) {
+  async getProducts(page, limit, sort) {
+    
     const options = {
-      page: page, 
-      limit: limit, 
+      page: page , 
+      limit: limit ,
+      sort: sort === "asc" ? { price: 1 } : sort === "desc" ? { price: -1 } : {},
     };
-
+    
     try {
       let products = await ProductModel.paginate({}, options)
-      console.log('Fetched products:', products.docs)
-      return products.docs
+      console.log('products:', products)
+      
+      return products
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.log('Error fetching products:', error)
       return []
     }
   }
@@ -34,7 +37,7 @@ class ProductManagerDB {
       console.log('newProduct:', newProduct);
       return newProduct;
   } catch (error) {
-      console.error('Error adding product:', error);
+      console.log('Error adding product:', error);
       throw error;
   }
   }
