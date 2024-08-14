@@ -5,6 +5,13 @@ import CartManagerDB from "../dao/managers/carts.dao.managers.js";
 const router = Router();
 const cartsManager = new CartManagerDB()
 
+router.get("/", async (req, res)=>{
+    const carts = await cartsManager.getCart()
+    res.status(200).json({
+        mensaje: "Se encontraron los carritos",
+        carritos: carts
+    })
+})
 router.get("/:id", async (req, res)=>{
     const {id} = req.params
     const filteredCart = await cartsManager.getCartById(id)

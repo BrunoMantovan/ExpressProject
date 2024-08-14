@@ -20,6 +20,9 @@
                 <p>Estado: {{#if this.status}}disponible{{else}}no disponible{{/if}}</p>
                 <p>Código: {{this.code}}</p>
             </div>
+            <div class="button-container">
+                <button class="btn" data-pid="{{this._id}}">agregar</button>
+            </div>
         </div>
         {{/each}}
     </div>
