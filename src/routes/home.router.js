@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ProductModel } from "../dao/model/products.model.js";
 import ProductManagerDB from "../dao/managers/products.dao.managers.js";
+import { isAuth, isLog } from "../middlewares/protectedRoute.js";
 
 const router = Router();
 const productManagerDB = new ProductManagerDB()
@@ -18,4 +19,18 @@ router.get("/", async (req, res)=>{
         })
     }
 })
+router.get("/register", isLog, (req, res) => {
+    res.render("register", {});
+  });
+  
+  router.get("/login", isLog, (req, res) => {
+    res.render("login", {});
+  });
+  
+  router.get("/perfil", isAuth, (req, res) => {
+    const user = req.session.user
+    const isLogged = req.session.isLogged
+    
+    res.render("perfil", {user, isLogged});
+  });
 export default router;

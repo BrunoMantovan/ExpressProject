@@ -9,6 +9,13 @@ import ProductManager from "./class/productManager.js";
 import handlebars from "express-handlebars";
 import mongoose from "mongoose";
 import ProductManagerDB from "./dao/managers/products.dao.managers.js";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import FileStore from "session-file-store";
+import MongoStore from "connect-mongo";
+import SessionRouter from "./routes/session.route.js";
+import passport from "passport";
+import initPassport from "./config/passport.config.js";
 
 const app = express();
 const productManager = new ProductManager(__dirname + "/data/products.json")
@@ -19,7 +26,27 @@ const hbs = handlebars.create({
         allowProtoMethodsByDefault: true
     }
 });
+
+
 //middleware
+
+app.use(session({
+    store: MongoStore.create({
+      mongoUrl: "mongodb+srv://ploktor:Sabaton.2001@cluster0.sknub.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+      dbName: "users",
+      ttl: 360,
+    }),
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 120000 } 
+}));
+  
+initPassport(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cookieParser());
 app.use(express.json()) //parsea el body
 app.use(express.urlencoded({extended: true})) //permite recibir formularios de las urls
 app.use(express.static(__dirname + "/public")); //permite servir archivos estáticos
@@ -30,6 +57,7 @@ app.use("/api/products", productRoute)
 app.use("/api/carts", cartRoute)
 app.use("/", homeRoute)
 app.use("/api/realtimeproducts", rtpRoute)
+app.use("/api/sessions", SessionRouter);
 
 
 const httpServer =app.listen(8080, () =>{
