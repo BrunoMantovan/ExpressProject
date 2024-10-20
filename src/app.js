@@ -1,34 +1,32 @@
 import express from "express";
 import productRoute from "./routes/products.router.js";
 import cartRoute from "./routes/carts.router.js";
-import homeRoute from "./routes/home.router.js";
+import HomeRoute from "./routes/home.router.js";
 import rtpRoute from "./routes/rtp.router.js";
-import {__dirname} from "./utils.js";
 import { Server } from "socket.io";
-import ProductManager from "./class/productManager.js";
-import handlebars from "express-handlebars";
-import mongoose from "mongoose";
 import ProductManagerDB from "./dao/managers/products.dao.managers.js";
-import cookieParser from "cookie-parser";
 import session from "express-session";
-import FileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 import SessionRouter from "./routes/session.route.js";
 import passport from "passport";
 import initPassport from "./config/passport.config.js";
+import { Command } from "commander";
+import { AppInit } from "./init/initialConfig.js"
 
 const app = express();
-const productManager = new ProductManager(__dirname + "/data/products.json")
 const productManagerDB = new ProductManagerDB();
-const hbs = handlebars.create({
-    runtimeOptions: {
-        allowProtoPropertiesByDefault: true,
-        allowProtoMethodsByDefault: true
-    }
-});
+const commander = new Command(app);
+AppInit(app)
 
+commander
+  .option('--port <port>', "Puerto del server", 8080)
+  .option('--mode <mode>', "Ambiente donde se usaran las variables de entorno", 'dev')
+  .requiredOption('--rol <rol>○', "Rol a ejecutar", "user")
+commander.parse()
+console.log(commander.opts())
 
-//middleware
+const homeRouter = new HomeRoute()
+const sessionRouter = new SessionRouter()
 
 app.use(session({
     store: MongoStore.create({
@@ -46,29 +44,17 @@ initPassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cookieParser());
-app.use(express.json()) //parsea el body
-app.use(express.urlencoded({extended: true})) //permite recibir formularios de las urls
-app.use(express.static(__dirname + "/public")); //permite servir archivos estáticos
-app.engine('handlebars', hbs.engine);
-app.set("views", __dirname + "/views");
-app.set("view engine", "handlebars")
 app.use("/api/products", productRoute)
 app.use("/api/carts", cartRoute)
-app.use("/", homeRoute)
+app.use("/", homeRouter.getRouter())
 app.use("/api/realtimeproducts", rtpRoute)
-app.use("/api/sessions", SessionRouter);
+app.use("/api/sessions", sessionRouter.getRouter());
 
 
-const httpServer =app.listen(8080, () =>{
+const httpServer =app.listen(process.env.PORT, () =>{
     console.log("Servidor iniciado en http://localhost:8080");
 })
-mongoose.connect("mongodb+srv://ploktor:Sabaton.2001@cluster0.sknub.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    {dbName: "backend"}
-).then(()=>{
-    console.log("Conectado a MongoDB");
-    
-})
+
 export const io = new Server(httpServer);
 
 io.on("connection", async (socket) => {

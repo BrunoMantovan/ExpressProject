@@ -24,6 +24,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  rol: {
+    type: String,
+    required: true,
+  },
   })
 
   export const UserModel = mongoose.model(userCollection, userSchema)

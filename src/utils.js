@@ -20,23 +20,16 @@ const storage = multer.diskStorage({
     }
 })
 
-const PRIVATE_KEY = "C0D3RH0US3"
-
 export const tokenGenerator = (user) => {
-    const token = jwt.sign({user}, PRIVATE_KEY, {expiresIn: "1h"})
+    const token = jwt.sign({user}, process.env.PRIVATE_KEY, {expiresIn: "1h"})
     return token
 }
 
-export const decodeToken = (req, res, next) => {
-    const token = req.cookies.authToken
-    console.log(token);
-    
-    if(!token) res.status(401).json({mensaje: "No hay token"})
-    jwt.verify(token, PRIVATE_KEY, (err, decoded) => {
-        if(err) res.status(401).json({mensaje: "Token no valido"})
-        req.user = decoded.user
-        next()
-    })
+export const getJWTCookie = (req) => {
+    let token = null
+    if(req.signedCookies){
+        token = req.signedCookies["authToken"]
+    }
+    return token
 }
-
 export const uploader = multer({ storage })

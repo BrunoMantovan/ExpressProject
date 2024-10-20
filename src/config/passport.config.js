@@ -2,6 +2,8 @@ import passport from "passport";
 import local from "passport-local";
 import { UserModel } from "../models/user.models.js";
 import { createHash, isValidPassword } from "../utils.js";
+import jwt from "jsonwebtoken";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 
 const localStrategy = local.Strategy
 
@@ -12,7 +14,7 @@ const initPassport = (app) =>{
         
     }, async (req, username, password, done) => {
        try{
-        const {nombre, apellido, edad, email, password} = req.body;
+        const {nombre, apellido, edad, email, password, rol} = req.body;
 
         const userFound = await UserModel.findOne({email: username}).lean();
         if(userFound){
@@ -24,7 +26,8 @@ const initPassport = (app) =>{
             apellido,
             edad,
             email,
-            password: createHash(password)
+            password: createHash(password),
+            rol
         }
         const user = await UserModel.create(newUser)
         return done(null, user) 
@@ -48,6 +51,25 @@ const initPassport = (app) =>{
             return done(e)
         }
     }))
+
+    passport.use("current", new JwtStrategy({
+        jwtFromRequest: (req) => {
+            const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req) || ExtractJwt.fromExtractors([req => req.cookies.authToken])(req);
+            return token;
+        },
+        secretOrKey: process.env.PRIVATE_KEY
+    }, async (jwt_payload, done) => {
+        try {
+            const user = await UserModel.findById(jwt_payload.user._id);
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        } catch (e) {
+            return done(e, false);
+        }
+    }));
 
     passport.serializeUser((user, done) => {
         done(null, user._id);

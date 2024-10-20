@@ -4,6 +4,7 @@ const apellido = document.querySelector("#lastname")
 const edad = document.querySelector("#age")
 const email = document.querySelector("#email")
 const password = document.querySelector("#password")
+const rol = document.querySelector("#rol")
 
 const user ={
     nombre: "",
@@ -11,6 +12,7 @@ const user ={
     edad: "",
     email: "",
     password: "",
+    rol: "",
 }
 
 const handleChange = (e) => {
@@ -23,6 +25,7 @@ apellido.addEventListener("input", handleChange)
 edad.addEventListener("input", handleChange)
 email.addEventListener("input", handleChange)
 password.addEventListener("input", handleChange)
+rol.addEventListener("input", handleChange)
 
 loginBtn.addEventListener("click", async()=>{
     try {
