@@ -10,20 +10,12 @@ import MongoStore from "connect-mongo";
 import SessionRouter from "./routes/session.route.js";
 import passport from "passport";
 import initPassport from "./config/passport.config.js";
-import { Command } from "commander";
 import { AppInit } from "./init/initialConfig.js"
+import config from "./config.js"
 
 const app = express();
 const productManagerDB = new ProductManagerDB();
-const commander = new Command(app);
 AppInit(app)
-
-commander
-  .option('--port <port>', "Puerto del server", 8080)
-  .option('--mode <mode>', "Ambiente donde se usaran las variables de entorno", 'dev')
-  .requiredOption('--rol <rol>○', "Rol a ejecutar", "user")
-commander.parse()
-console.log(commander.opts())
 
 const homeRouter = new HomeRoute()
 const sessionRouter = new SessionRouter()
@@ -50,9 +42,15 @@ app.use("/", homeRouter.getRouter())
 app.use("/api/realtimeproducts", rtpRoute)
 app.use("/api/sessions", sessionRouter.getRouter());
 
+const PORT = config.PORT
 
-const httpServer =app.listen(process.env.PORT, () =>{
-    console.log("Servidor iniciado en http://localhost:8080");
+/* process.on("exit", (code) =>{
+    console.log("El servidor se ha cerrado con el codigo " + code);
+})
+process.exit() */
+
+const httpServer =app.listen(PORT, () =>{
+    console.log("Servidor iniciado en http://localhost:" + PORT);
 })
 
 export const io = new Server(httpServer);

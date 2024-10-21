@@ -29,7 +29,7 @@ const initPassport = (app) =>{
             password: createHash(password),
             rol
         }
-        const user = await UserModel.create(newUser)
+        const user = await UserModel.update(newUser)
         return done(null, user) 
        }catch(e){
         console.log(e);

@@ -1,6 +1,6 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import multer from "multer";
+//import multer from "multer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -11,14 +11,14 @@ const __filename = fileURLToPath(import.meta.url)
 
 export const __dirname = dirname(__filename)
 
-const storage = multer.diskStorage({
+/* const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, __dirname + "/public/img");
     },
     filename: (req, file, callback) => {
         callback(null, file.originalname);
     }
-})
+}) */
 
 export const tokenGenerator = (user) => {
     const token = jwt.sign({user}, process.env.PRIVATE_KEY, {expiresIn: "1h"})
@@ -32,4 +32,8 @@ export const getJWTCookie = (req) => {
     }
     return token
 }
-export const uploader = multer({ storage })
+//export const uploader = multer({ storage })
+
+export const createResponse = (res, statusCode, data) => {
+    return res.status(statusCode).json({data})
+}
