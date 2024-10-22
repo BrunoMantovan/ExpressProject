@@ -22,8 +22,8 @@ const sessionRouter = new SessionRouter()
 
 app.use(session({
     store: MongoStore.create({
-      mongoUrl: "mongodb+srv://ploktor:Sabaton.2001@cluster0.sknub.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-      dbName: "users",
+      mongoUrl: process.env.MONGO_STRING,
+      dbName: process.env.DB_NAME,
       ttl: 360,
     }),
     secret: "secret",

@@ -26,10 +26,13 @@ export default class UserRouterCustom extends CustomRouter {
     });
     
     this.get("/login", ["PUBLIC"], isLog, (req, res) => {
+      console.log(req.session);
+      
       res.render("login", {});
     });
     
     this.get("/perfil", ["PUBLIC"], isAuth, (req, res) => {
+      console.log(req.session);
       const user = req.session.user
       const isLogged = req.session.isLogged
       

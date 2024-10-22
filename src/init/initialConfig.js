@@ -1,20 +1,22 @@
 import express from 'express';
 import handlebars from "express-handlebars";
 import { __dirname } from '../utils.js';
-import { connectionDB } from '../mongo/connection.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import initPassport from "../passport/jwt.passport.js"
+import MongoSingleton from '../mongo/connection.js';
+import cors from 'cors';
 
 export const AppInit = (app) => {
     dotenv.config()
-    connectionDB();
+    MongoSingleton.getInstance()
     const hbs = handlebars.create({
         runtimeOptions: {
             allowProtoPropertiesByDefault: true,
             allowProtoMethodsByDefault: true
         }
     });
+    app.use(cors())
     app.use(cookieParser(process.env.PRIVATE_KEY))
     initPassport()
     app.engine('handlebars', hbs.engine);

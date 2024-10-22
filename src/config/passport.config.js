@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from "passport-local";
-import { UserModel } from "../models/user.models.js";
+import { UserModel } from "../dao/model/user.models.js";
 import { createHash, isValidPassword } from "../utils.js";
 import jwt from "jsonwebtoken";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
@@ -8,7 +8,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 const localStrategy = local.Strategy
 
 const initPassport = (app) =>{
-    passport.use("registerStrategy", new localStrategy({
+    /* passport.use("registerStrategy", new localStrategy({
         usernameField: "email",
         passReqToCallback: true, //pasar el objeto a otros middlewares
         
@@ -36,9 +36,9 @@ const initPassport = (app) =>{
         
         return done(e)
        }   
-    }))
+    })) */
 
-    passport.use("loginStrategy", new localStrategy({
+    /* passport.use("loginStrategy", new localStrategy({
         usernameField: "email",
         passReqToCallback: true, //pasar el objeto a otros middlewares
     }, async (req, username, password, done) => {
@@ -50,9 +50,9 @@ const initPassport = (app) =>{
         }catch(e){
             return done(e)
         }
-    }))
+    })) */
 
-    passport.use("current", new JwtStrategy({
+    /* passport.use("current", new JwtStrategy({
         jwtFromRequest: (req) => {
             const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req) || ExtractJwt.fromExtractors([req => req.cookies.authToken])(req);
             return token;
@@ -69,7 +69,7 @@ const initPassport = (app) =>{
         } catch (e) {
             return done(e, false);
         }
-    }));
+    })); */
 
     passport.serializeUser((user, done) => {
         done(null, user._id);

@@ -30,4 +30,25 @@ export default class UserController extends Controllers{
             next(e)
         }
     }
+    logout = async(req, res, next)=>{
+        try{
+            req.session.destroy((e)=>{
+                if(e) return res.send("error al desloguearse")
+                return res.redirect("/login")                
+            })
+        }catch (e) {
+            next(e)
+        }
+    }
+    current = async(req, res, next)=>{
+        try{
+            if (req.user) {
+                res.json({ usuario: req.user.user});
+            } else {
+                res.status(401).json({ mensaje: "Unauthorized" });
+            }
+        }catch (e) {
+            next(e)
+        }
+    }
 }

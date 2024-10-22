@@ -15,7 +15,7 @@ const modeEnviroment = commander.opts().mode
 console.log({modeEnviroment});
 
 dotenv.config({
-    path: modeEnviroment == "dev" ? ".env" : ".env.production"
+    path: modeEnviroment == "prod" ? ".env.production" : ".env"
 })
 
 export default {

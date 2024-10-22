@@ -1,5 +1,5 @@
 import { tokenGenerator, isValidPassword, createHash } from "../utils.js";
-import UserAccessMongo from "../models/user.dao.js";
+import UserAccessMongo from "../dao/model/user.dao.js";
 import Services from "./services.js"
 
 const userDAO = new UserAccessMongo()
@@ -28,18 +28,18 @@ export default class UserService extends Services {
 
     async login(user) {
         try {
-          const { email, password } = user;
-          const userExist = await this.dao.getByEmail(email);
-          
-          if (!userExist) return null;
-          const passValid = isValidPassword(userExist, password);
-          if (!passValid) return null;
-          if(userExist && passValid){
+            const { email, password } = user;
+            const userExist = await this.dao.getByEmail(email);
+            
+            if (!userExist) return null;
+            const passValid = isValidPassword(userExist, password);
+            if (!passValid) return null;
+            
             return {
                 user: userExist,
                 token: tokenGenerator(userExist)
             }
-          } 
+          
         } catch (error) {
           throw new Error(error);
         }

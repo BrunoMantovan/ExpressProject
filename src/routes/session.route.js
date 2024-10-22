@@ -12,31 +12,11 @@ export default class UserRouterCustom extends CustomRouter {
         })
         this.get ("/", ["PUBLIC"], userController.getAll)
         this.post("/register", ["PUBLIC"], userController.register)
-        this.post("/login", ["PUBLIC"], userController.login)
-        
-        this.get("/logout", ["PUBLIC"], (req, res) => {
-            req.session.destroy((e)=>{
-                if(e) return res.send("error al desloguearse")
-                return res.redirect("/login")
-                
-            })
-        })
-        this.get("/current", ["PUBLIC"], invokePassport("jwt"), handleAuth("admin"), async (req, res) => {
-            if (req.user) {
-                res.json({ usuario: req.user });
-            } else {
-                res.status(401).json({ mensaje: "Unauthorized" });
-            }
-        })
+        this.post("/login", ["PUBLIC"], userController.login)        
+        this.get("/logout", ["PUBLIC"], userController.logout)
+        this.get("/current", ["PUBLIC"], invokePassport("jwt"), handleAuth("admin"), userController.current)
         this.get ("/:id", ["PUBLIC"], userController.getById)
         this.put ("/:id", ["PUBLIC"], userController.update)
         this.delete ("/:id", ["PUBLIC"], userController.delete)
-
-        /* this.get("/failedRegister", ["PUBLIC"], (req, res) => {
-            res.status(400).json({mensaje: "Error al crear el usuario"});
-        })
-        this.get("/failedLogin", ["PUBLIC"], (req, res) => {
-            res.status(400).json({mensaje: "Error al inciar sesión"});
-        }) */
     }
 }

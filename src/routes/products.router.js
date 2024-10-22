@@ -34,14 +34,14 @@ router.get("/", async (req, res) => {
 })
 router.get("/search/:category", async (req, res) => {
     const category = req.params.category;
-    let products = await manager.getProductsByQueryCategory(
+    let products = await productManagerDB.getProductsByQueryCategory(
       category.toLowerCase()
     );
     res.status(200).json(products);
 });
 
 router.get("/price", async (req, res) => {
-  let products = await manager.ordenPrice(1);
+  let products = await productManagerDB.ordenPrice(1);
   res.status(200).json(products);
 });
 
