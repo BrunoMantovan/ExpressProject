@@ -21,7 +21,7 @@ class ProductManagerDB {
       return []
     }
   }
-
+/* 
   async addProducts(title, description, price, thumbnail, code, stock, category, status) {
     try {
       let newProduct = await ProductModel.create({
@@ -91,7 +91,7 @@ class ProductManagerDB {
     ]);
 
     return products;
-  }
+  } */
  
   }
 export default ProductManagerDB;

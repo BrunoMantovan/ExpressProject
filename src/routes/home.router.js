@@ -1,25 +1,15 @@
 import ProductManagerDB from "../dao/managers/products.dao.managers.js";
 import { isAuth, isLog } from "../middlewares/protectedRoute.js";
 import CustomRouter from "./customRouter.js";
+import ProductController from "../controllers/product.controller.js";
 
+const productController = new ProductController();
 const productManagerDB = new ProductManagerDB()
 
 
 export default class UserRouterCustom extends CustomRouter {
   init(){
-    this.get("/", async (req, res)=>{
-      try {
-          const { page=1, limit=10, sort='' } = req.query;        
-          const products = await productManagerDB.getProducts(page, limit, sort);
-          const result = products.docs     
-          res.render("home", { result });
-        } catch(e){
-          return res.status(500).json({
-              mensaje: "Error cargando productos",
-              error: e
-          })
-      }
-    })
+    this.get("/", ["PUBLIC"], isAuth, productController.getProductsView);
     
     this.get("/register", ["PUBLIC"], isLog, (req, res) => {
       res.render("register", {});

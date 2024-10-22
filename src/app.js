@@ -1,24 +1,26 @@
 import express from "express";
-import productRoute from "./routes/products.router.js";
-import cartRoute from "./routes/carts.router.js";
-import HomeRoute from "./routes/home.router.js";
 import rtpRoute from "./routes/rtp.router.js";
 import { Server } from "socket.io";
-import ProductManagerDB from "./dao/managers/products.dao.managers.js";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import SessionRouter from "./routes/session.route.js";
 import passport from "passport";
 import initPassport from "./config/passport.config.js";
 import { AppInit } from "./init/initialConfig.js"
 import config from "./config.js"
+import HomeRouterCustom from "./routes/home.router.js";
+import SessionRouterCustom from "./routes/session.route.js";
+import ProductsRouterCustom from "./routes/products.router.js";
+import CartsRouterCustom from "./routes/carts.router.js";
+import ProductController from "./controllers/product.controller.js";
 
 const app = express();
-const productManagerDB = new ProductManagerDB();
+const productController = new ProductController();
 AppInit(app)
 
-const homeRouter = new HomeRoute()
-const sessionRouter = new SessionRouter()
+const homeRouter = new HomeRouterCustom()
+const sessionRouter = new SessionRouterCustom()
+const productRouter = new ProductsRouterCustom();
+const cartsRouter = new CartsRouterCustom();
 
 app.use(session({
     store: MongoStore.create({
@@ -36,8 +38,8 @@ initPassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/products", productRoute)
-app.use("/api/carts", cartRoute)
+app.use("/api/products", productRouter.getRouter())
+app.use("/api/carts", cartsRouter.getRouter())
 app.use("/", homeRouter.getRouter())
 app.use("/api/realtimeproducts", rtpRoute)
 app.use("/api/sessions", sessionRouter.getRouter());
@@ -57,41 +59,40 @@ export const io = new Server(httpServer);
 
 io.on("connection", async (socket) => {
     socket.on("addProduct", async (product) => {
-
-        const result = await productManagerDB.addProducts(
-            product.title,
-            product.description,
-            product.price,
-            product.thumbnail,
-            product.code,
-            product.stock,
-            product.category,
-            product.status
-        )
-
-        if (!result) {
-            console.log(result);
-            return socket.emit("error", "El producto ya existe")
-        }else if(result){
-            return socket.emit("addedProduct", "El producto ha sido añadido correctamente")
+        try {
+            const result = await productController.create({ body: product });
+            if (result) {
+                socket.emit("addedProduct", "El producto ha sido añadido correctamente");
+            } else {
+                socket.emit("error", "No se pudo añadir el producto");
+            }
+        } catch (error) {
+            socket.emit("error", "Error al añadir el producto");
         } 
     })
     socket.on("updateProduct", async (product) => {
-        const result = await productManagerDB.updateProduct(product.id, product.updatedProduct);
-        if (!result) {
-            console.log(result);
-            return socket.emit("error", "El producto no existe")
-        }else if(result){
-            return socket.emit("updatedProduct", "El producto ha sido actualizado correctamente")
+        try {
+            const result = await productController.update({ params: { id: product.id }, body: product.updatedProduct });
+            if (result) {
+                socket.emit("updatedProduct", "El producto ha sido actualizado correctamente");
+            } else {
+                socket.emit("error", "No se pudo actualizar el producto");
+            }
+        } catch (error) {
+            socket.emit("error", "Error al actualizar el producto");
         }
     })
     socket.on("deleteProduct", async (id) => {
-        const result = await productManagerDB.deleteProduct(id);
-        if (!result) {
-            console.log(result);
-            return socket.emit("error", "El producto no existe")
+        try {
+            const result = await productController.delete({ params: { id } });
+            if (result) {
+                socket.emit("deletedProduct", "El producto ha sido eliminado correctamente");
+            } else {
+                socket.emit("error", "No se pudo eliminar el producto");
+            }
+        } catch (error) {
+            socket.emit("error", "Error al eliminar el producto");
         }
-        return socket.emit("addedProduct")
 
     })
 })

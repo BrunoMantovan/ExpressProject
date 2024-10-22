@@ -45,20 +45,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     let cartId;
 
     try {
-        const response = await fetch('http://localhost:8080/api/carts');
-        const carts = await response.json();
-        console.log("carritos " + JSON.stringify(carts));
+        const response = await fetch('http://localhost:8080/api/carts/user');
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);
         
-        if (carts.carritos && carts.carritos.length > 0) {
-            cartId = carts.carritos[0]._id;
-            console.log("carrito " + cartId);
+        if (data.carrito) {
+            cartId = data.carrito._id;
+            console.log("ID del carrito:", cartId);
+        } else if (response.status === 404) {
+            console.log("No se encontró un carrito, se creará uno nuevo");
+            // Aquí podrías hacer otra solicitud para crear un nuevo carrito si es necesario
         } else {
-            console.error('No carts found');
-            return;
+            console.error('Respuesta inesperada:', data);
         }
     } catch (error) {
-        console.error('Error fetching cart ID:', error);
-        return;
+        console.error('Error al obtener el carrito:', error);
     }
 
     buttons.forEach(button => {
