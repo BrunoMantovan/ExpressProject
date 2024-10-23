@@ -1,3 +1,4 @@
+import UserDTO from "../DTO/User.dto.js"
 import UserService from "../services/user.services.js"
 import { createResponse } from "../utils.js"
 import Controllers from "./Controllers.js"
@@ -12,7 +13,8 @@ export default class UserController extends Controllers{
     register = async(req, res, next)=>{
         try{
             const data = await this.service.register(req.body)
-            !data ? createResponse(res, 404, data) : createResponse(res, 201, data)
+            const response = data ? new UserDTO(data) : null;
+            !response ? createResponse(res, 404, response) : createResponse(res, 201, response)
         }catch (e) {
             next(e)
         }
@@ -23,9 +25,10 @@ export default class UserController extends Controllers{
             const token = data.token
             req.session.isLogged = true;
             req.session.user = data.user
+            const userDto = new UserDTO(data.user)
             
             !token ? createResponse(res, 404, token) : 
-            res.status(200).cookie("authToken", token, {httpOnly: true, signed: true, secure: false, maxAge: 60 * 60 * 1000 }).json({mensaje: "Usuario logueado", token});
+            res.status(200).cookie("authToken", token, {httpOnly: true, signed: true, secure: false, maxAge: 60 * 60 * 1000 }).json({mensaje: "Usuario logueado", userDto ,token});
         }catch (e) {
             next(e)
         }
@@ -43,7 +46,8 @@ export default class UserController extends Controllers{
     current = async(req, res, next)=>{
         try{
             if (req.user) {
-                res.json({ usuario: req.user.user});
+                const userDto = new UserDTO(req.user.user)
+                res.json({ usuario: userDto});
             } else {
                 res.status(401).json({ mensaje: "Unauthorized" });
             }

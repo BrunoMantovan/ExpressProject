@@ -1,47 +1,46 @@
-import CartAccessMongo from "../dao/model/carts.dao.js";
-import Services from "./services.js";
+import { CartRepository } from "../repositories/cart.repository.js";
 
-export class CartsService extends Services {
+export class CartsService {
     constructor() {
-        super(new CartAccessMongo());
+        this.repository = new CartRepository();
     }
 
     async getCarts() {
-        return this.dao.getAll();
+        return this.repository.getAll();
     }
 
     async getCartById(id) {
-        return this.dao.getCartById(id);
+        return this.repository.getCartById(id);
     }
 
     async createCart() {
-        return this.dao.create({ products: [] });
+        return this.repository.create({ products: [] });
     }
 
     async getCartByUser(userId) {
         if (!userId) {
             throw new Error("UserId no proporcionado");
         }
-        return await this.dao.createOrGetCart(userId);
+        return await this.repository.createOrGetCart(userId);
     }
 
     async addProductToCart(cartId, productId) {
-        return this.dao.addProductToCart(cartId, productId);
+        return this.repository.addProductToCart(cartId, productId);
     }
 
     async deleteProductFromCart(cartId, productId) {
-        return this.dao.deleteProductFromCart(cartId, productId);
+        return this.repository.deleteProductFromCart(cartId, productId);
     }
 
     async deleteAllProductsFromCart(cartId) {
-        return this.dao.deleteAllProductsFromCart(cartId);
+        return this.repository.deleteAllProductsFromCart(cartId);
     }
 
     async updateProductQuantity(cartId, productId, quantity) {
-        return this.dao.updateProductQuantity(cartId, productId, quantity);
+        return this.repository.updateProductQuantity(cartId, productId, quantity);
     }
 
     async updateProductsArray(cartId, products) {
-        return this.dao.updateProductsArray(cartId, products);
+        return this.repository.updateProductsArray(cartId, products);
     }
 }

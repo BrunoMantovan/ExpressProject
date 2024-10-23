@@ -1,10 +1,8 @@
-import ProductManagerDB from "../dao/managers/products.dao.managers.js";
 import { isAuth, isLog } from "../middlewares/protectedRoute.js";
 import CustomRouter from "./customRouter.js";
 import ProductController from "../controllers/product.controller.js";
 
 const productController = new ProductController();
-const productManagerDB = new ProductManagerDB()
 
 
 export default class UserRouterCustom extends CustomRouter {

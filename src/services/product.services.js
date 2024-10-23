@@ -1,22 +1,39 @@
-import ProductAccessMongo from "../dao/model/product.dao.js";
-import Services from "./services.js";
+import { ProductRepository } from "../repositories/product.repository.js";
 
-const productDAO = new ProductAccessMongo();
-
-export default class ProductService extends Services {
+export default class ProductService {
     constructor() {
-        super(productDAO);
+        this.repository = new ProductRepository();
+    }
+
+    async getAll() {
+        return this.repository.getAll();
+    }
+
+    async getById(id) {
+        return this.repository.getById(id);
+    }
+
+    async create(productData) {
+        return this.repository.create(productData);
+    }
+
+    async update(id, productData) {
+        return this.repository.update(id, productData);
+    }
+
+    async delete(id) {
+        return this.repository.delete(id);
     }
 
     async getProducts(page, limit, sort) {
-        return await this.dao.getProducts(page, limit, sort);
+        return this.repository.getProducts(page, limit, sort);
     }
 
     async getProductsByCategory(category) {
-        return await this.dao.getProductsByQueryCategory(category);
+        return this.repository.getProductsByCategory(category);
     }
 
     async getProductsByPrice(order) {
-        return await this.dao.ordenPrice(order === 'asc' ? 1 : -1);
+        return this.repository.getProductsByPrice(order);
     }
 }
