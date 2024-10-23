@@ -1,3 +1,4 @@
+import UserDTO from "../DTO/User.dto.js";
 import { CartsService } from "../services/carts.services.js";
 export class CartsController {
   constructor() {
@@ -11,7 +12,7 @@ export class CartsController {
         mensaje: "Se encontraron los carritos",
         carritos: carts
       });
-    } catch (error) {
+    } catch (e) {
       res.status(500).json({ mensaje: "Error al obtener los carritos" });
     }
   }
@@ -20,11 +21,17 @@ export class CartsController {
     try {
         const { id } = req.params;
         const cart = await this.cartsService.getCartById(id);
+        const userDto = new UserDTO(cart.user);
+
         res.status(200).json({
-            mensaje: "Se encontró el carrito",
-            carrito: cart
-        });
-    } catch (error) {
+          mensaje: "Se encontró el carrito",
+          carrito: {
+            _id: cart._id,
+            user: userDto,
+            products: cart.products
+          }
+      });
+    } catch (e) {
         res.status(404).json({ mensaje: "Carrito no encontrado" });
     }
   }
@@ -45,8 +52,8 @@ export class CartsController {
         } else {
             res.status(404).json({ mensaje: "No se encontró un carrito, se creará uno nuevo" });
         }
-    } catch (error) {
-        console.error("Error en getCartByUser:", error);
+    } catch (e) {
+        console.error("Error en getCartByUser:", e);
         res.status(500).json({ mensaje: "Error interno del servidor" });
     }
   }
@@ -59,7 +66,7 @@ export class CartsController {
         res.status(201).json({
             mensaje: "Se creó el carrito"
         });
-    } catch (error) {
+    } catch (e) {
         res.status(500).json({ mensaje: "Error al crear el carrito" });
     }
   }
@@ -71,7 +78,7 @@ export class CartsController {
       res.status(201).json({
         mensaje: "Producto agregado correctamente"
       });
-    } catch (error) {
+    } catch (e) {
       res.status(400).json({ mensaje: "No se pudo agregar el producto" });
     }
   }
@@ -83,7 +90,7 @@ export class CartsController {
       res.status(200).json({
         mensaje: "Se eliminó el producto del carrito"
       });
-    } catch (error) {
+    } catch (e) {
       res.status(400).json({ mensaje: "No se pudo eliminar el producto" });
     }
   }
@@ -95,7 +102,7 @@ export class CartsController {
       res.status(200).json({
         mensaje: "Se eliminaron todos los productos del carrito"
       });
-    } catch (error) {
+    } catch (e) {
       res.status(400).json({ mensaje: "No se pudo vaciar el carrito" });
     }
   }
@@ -108,7 +115,7 @@ export class CartsController {
       res.status(200).json({
         mensaje: "Se actualizó la cantidad del producto"
       });
-    } catch (error) {
+    } catch (e) {
       res.status(400).json({ mensaje: "No se pudo actualizar la cantidad" });
     }
   }
@@ -121,8 +128,27 @@ export class CartsController {
       res.status(200).json({
         mensaje: "Se actualizó el carrito"
       });
-    } catch (error) {
+    } catch (e) {
       res.status(400).json({ mensaje: "No se pudo actualizar el carrito" });
+    }
+  }
+
+  purchase = async (req, res) => {
+    try{
+      const { cid } = req.params;
+      const data = await this.cartsService.purchaseProductsInCart(cid)
+      if(!data.ticket){
+        return res.status(400).json({
+          mensaje: "El carrito está vacío",
+          data
+        });
+      }
+      res.status(200).json({
+        mensaje: "Se compro el carrito",
+        data
+      });
+    } catch(e) {
+      res.status(400).json({ mensaje: "No se pudo procesar la compra" });
     }
   }
 }

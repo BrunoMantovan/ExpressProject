@@ -33,4 +33,8 @@ export class CartRepository extends BaseRepository {
     async updateProductsArray(cid, products) {
         return this.dao.updateProductsArray(cid, products);
     }
+
+    async purchaseProductsInCart(cid) {
+        return this.dao.purchaseProductsInCart(cid);
+    }
 }

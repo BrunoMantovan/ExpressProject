@@ -9,6 +9,7 @@ export default class CartsRouterCustom extends CustomRouter {
         this.get("/user", ["USER", "ADMIN"], cartsController.getCartByUser);
         this.get("/:id", ["USER", "ADMIN"], cartsController.getCartById);
         this.post("/", ["USER"], cartsController.createCart);
+        this.post("/:cid/purchase", ["USER"], cartsController.purchase)
         this.post("/:cid/products/:pid", ["USER"], cartsController.addProductToCart);
         this.delete("/:cid/products/:pid", ["USER","ADMIN"], cartsController.deleteProductFromCart);
         this.delete("/:cid", ["USER", "ADMIN"], cartsController.deleteAllProductsFromCart);

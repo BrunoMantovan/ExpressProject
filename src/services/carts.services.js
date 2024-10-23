@@ -43,4 +43,8 @@ export class CartsService {
     async updateProductsArray(cartId, products) {
         return this.repository.updateProductsArray(cartId, products);
     }
+
+    async purchaseProductsInCart(cartId) {
+        return this.repository.purchaseProductsInCart(cartId);
+    }
 }

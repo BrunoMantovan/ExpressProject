@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 //import multer from "multer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export const createHash = (pass) => bcrypt.hashSync(pass, bcrypt.genSaltSync(10))
 export const isValidPassword = (user, pass) => bcrypt.compareSync(pass, user.password)
@@ -24,6 +26,10 @@ export const tokenGenerator = (user) => {
     const token = jwt.sign({user}, process.env.PRIVATE_KEY, {expiresIn: "1h"})
     return token
 }
+
+export const generateUniqueCode = () => {
+    return uuidv4();
+};
 
 export const getJWTCookie = (req) => {
     let token = null

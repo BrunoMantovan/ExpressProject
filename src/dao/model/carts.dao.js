@@ -1,6 +1,7 @@
 import MongoDao from "./dao.js";
 import { cartsModel } from "./carts.model.js";
-
+import { TicketModel } from "./ticket.model.js"
+import { generateUniqueCode } from '../../utils.js';
 export default class CartAccessMongo extends MongoDao {
     constructor() {
         super(cartsModel);
@@ -8,7 +9,7 @@ export default class CartAccessMongo extends MongoDao {
 
     async getCartById(id) {
         try {
-            return await this.model.findById(id).populate('products.product');
+            return await this.model.findById(id).populate('products.product').populate('user'); 
         } catch (error) {
             throw new Error(error);
         }
@@ -87,6 +88,53 @@ export default class CartAccessMongo extends MongoDao {
                 { new: true }
             );
         } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async purchaseProductsInCart(cid) {
+        try {
+            const cart = await this.getCartById(cid)
+            if (!cart) {
+                throw new Error("Carrito no encontrado");
+            }
+    
+            const productsNotPurchased = [];
+            const productsPurchased = [];
+    
+            for (const item of cart.products) {
+                const product = item.product;
+                if (product.stock >= item.quantity) {
+                    product.stock -= item.quantity;
+                    await product.save();
+                    productsPurchased.push({
+                        product: product._id,
+                        quantity: item.quantity,
+                        price: product.price
+                    });
+                } else {
+                    productsNotPurchased.push(product._id);
+                }
+            }
+            const amount = productsPurchased.reduce((total, item) => total + item.price * item.quantity, 0)
+            console.log(amount);
+            
+            if(amount <= 0) return {mensaje: "No se pudo procesar la compra", ticket: null, productsNotPurchased: null}
+
+            const ticket = await TicketModel.create({
+                code: generateUniqueCode(),
+                amount: amount,
+                purchaser: cart.user.email
+            });
+            cart.products = cart.products.filter(item => productsNotPurchased.includes(item.product._id));
+            await cart.save();
+    
+            return {
+                ticket,
+                productsNotPurchased
+            };
+        } catch (error) {
+            console.error("Error en purchaseProductsInCart:", error)
             throw new Error(error);
         }
     }
