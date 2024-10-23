@@ -26,9 +26,5 @@ export default class UserRouterCustom extends CustomRouter {
       
       res.render("perfil", {user, isLogged});
     });
-    
-    this.get('/:id', ["PUBLIC"], (req, res) => {
-      res.send(req.params.id);
-    });
   }
 }

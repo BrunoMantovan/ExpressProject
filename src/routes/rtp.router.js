@@ -1,9 +1,10 @@
-import { Router } from "express";
+import { isAuth } from "../middlewares/protectedRoute.js";
+import CustomRouter from "./customRouter.js";
 
-const router = Router();
-
-router.get("/", (req, res)=>{
-    res.render("realTimeProducts", {})
-})
-
-export default router;
+export default class RtpRouterCustom extends CustomRouter {
+    init(){
+        this.get("/", ["ADMIN"], (req, res)=>{
+            res.render("realTimeProducts", {})
+        })
+    }
+}

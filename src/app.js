@@ -1,5 +1,4 @@
 import express from "express";
-import rtpRoute from "./routes/rtp.router.js";
 import { Server } from "socket.io";
 import session from "express-session";
 import MongoStore from "connect-mongo";
@@ -11,6 +10,7 @@ import HomeRouterCustom from "./routes/home.router.js";
 import SessionRouterCustom from "./routes/session.route.js";
 import ProductsRouterCustom from "./routes/products.router.js";
 import CartsRouterCustom from "./routes/carts.router.js";
+import RtpRouterCustom from "./routes/rtp.router.js";
 import ProductController from "./controllers/product.controller.js";
 
 const app = express();
@@ -18,9 +18,10 @@ const productController = new ProductController();
 AppInit(app)
 
 const homeRouter = new HomeRouterCustom()
-const sessionRouter = new SessionRouterCustom()
 const productRouter = new ProductsRouterCustom();
 const cartsRouter = new CartsRouterCustom();
+const rtpRouter = new RtpRouterCustom()
+const sessionRouter = new SessionRouterCustom()
 
 app.use(session({
     store: MongoStore.create({
@@ -38,10 +39,10 @@ initPassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/", homeRouter.getRouter())
 app.use("/api/products", productRouter.getRouter())
 app.use("/api/carts", cartsRouter.getRouter())
-app.use("/", homeRouter.getRouter())
-app.use("/api/realtimeproducts", rtpRoute)
+app.use("/api/realtimeproducts", rtpRouter.getRouter())
 app.use("/api/sessions", sessionRouter.getRouter());
 
 const PORT = config.PORT

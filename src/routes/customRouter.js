@@ -47,7 +47,12 @@ export default class CustomRouter {
             console.log(policies);
             
             if(policies.includes("PUBLIC")) return next();
-            const reqJWT = req.headers.authorization
+            const reqJWT = req.headers.authorization ? req.headers.authorization : req.signedCookies.authToken;
+            console.log("headers: ",req.headers.authorization);
+            console.log("cookies: ",req.signedCookies.authToken);
+            console.log("jwt: ",reqJWT);
+            
+            
             if(!reqJWT) return res.status(401).json({success: false, payload: "usuario no logeado"});
             let userPayload = null
             try{
